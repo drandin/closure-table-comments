@@ -1,0 +1,19 @@
+{
+    "name": "drandin/closure-table-comments",
+    "description": "Storing hierarchical tree structures in a database using the \"Closure Table\" method combined with \"Adjacency List\"",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Drandin",
+            "email": "idrandin@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Drandin\\ClosureTableComments\\": "src/"
+        }
+    },
+    "require": {}
+}
