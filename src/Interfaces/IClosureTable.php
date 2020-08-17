@@ -2,7 +2,7 @@
 
 namespace Drandin\ClosureTableComments\Interfaces;
 
-use Drandin\ClosureTableComments\ClosureTableCollection;
+use Drandin\ClosureTableComments\NodeCollection;
 use Drandin\ClosureTableComments\Node;
 
 /**
@@ -23,12 +23,13 @@ interface IClosureTable {
      * Delete branch of tree
      *
      * @param int $id
-     * @return void
+     * @return bool
      */
-    public function deleteBranch(int $id): void;
+    public function deleteBranch(int $id): bool;
 
     /**
      * Add one new element into tree
+     *
      * @param Node $node
      * @param int $id
      * @return bool
@@ -36,16 +37,17 @@ interface IClosureTable {
     public function add(Node $node, int $id = 0): bool;
 
     /**
-     * Return part of tree or entire hierarchy from root as array
+     * Return part of tree or entire hierarchy from root
      *
      * @param int $id
-     * @return ClosureTableCollection|null
+     * @return NodeCollection|null
      */
-    public function getTree(int $id = 0): ?ClosureTableCollection;
+    public function getTree(int $id = 0): ?NodeCollection;
 
 
     /**
      * Return IDs all elements of branch of tree
+     *
      * @param int $id
      * @return array
      */
@@ -71,6 +73,15 @@ interface IClosureTable {
      * @param int $subjectId
      * @return int
      */
-    public function countItemsBySubject(int $subjectId): int;
+    public function countNodesBySubject(int $subjectId): int;
+
+    /**
+     * Edit exist comment
+     *
+     * @param string $comment
+     * @param int $id
+     * @return bool
+     */
+    public function editComment(string $comment, int $id): bool;
 
 }

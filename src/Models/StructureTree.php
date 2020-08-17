@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Eloquent;
 
 /**
- * Class ClosureTableTree
+ * Class StructureTree
  *
  * @property int $ancestor_id
  * @property int $descendant_id
@@ -18,13 +18,13 @@ use Eloquent;
  *
  * @package Drandin\ClosureTableComments\Models
  */
-class ClosureTableTree extends Eloquent
+class StructureTree extends Eloquent
 {
 
     public function __construct(array $attributes = [])
     {
         $database = config('closure-table-comments.database');
-        $table = config('closure-table-comments.tables.tree');
+        $table = config('closure-table-comments.tables.structure');
 
         $this->setTable($database. '.'. $table);
         parent::__construct($attributes);

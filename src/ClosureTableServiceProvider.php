@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
  * Class ClosureTableServiceProvider
  * @package Drandin\ClosureTableComments
  */
-class ClosureTableServiceProvider extends ServiceProvider
+final class ClosureTableServiceProvider extends ServiceProvider
 {
     /**
      * @var bool

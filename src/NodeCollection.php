@@ -5,10 +5,10 @@ namespace Drandin\ClosureTableComments;
 use Iterator;
 
 /**
- * Class ClosureTableCollection
+ * Class NodeCollection
  * @package Drandin\ClosureTableComments
  */
-class ClosureTableCollection implements Iterator
+final class NodeCollection implements Iterator
 {
     /**
      * @var array
@@ -16,14 +16,14 @@ class ClosureTableCollection implements Iterator
     private $users = [];
 
     /**
-     * @param null $items
+     * @param null $nodes
      */
-    public function __construct($items = null)
+    public function __construct($nodes = null)
     {
-        if (is_array($items)) {
-            foreach ($items as $item) {
-                if ($item instanceof Node) {
-                    $this->addNode($item);
+        if (is_array($nodes)) {
+            foreach ($nodes as $node) {
+                if ($node instanceof Node) {
+                    $this->addNode($node);
                 }
             }
 

@@ -169,10 +169,10 @@ class Node
     }
 
     /**
-     * @param int $subjectId
-     * @return Node
+     * @param int|null $subjectId
+     * @return $this
      */
-    public function setSubjectId(int $subjectId): Node
+    public function setSubjectId(?int $subjectId): Node
     {
         $this->subjectId = $subjectId;
         return $this;

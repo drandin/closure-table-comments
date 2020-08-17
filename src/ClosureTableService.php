@@ -4,25 +4,30 @@ namespace Drandin\ClosureTableComments;
 
 use Carbon\Carbon;
 use Drandin\ClosureTableComments\Interfaces\IClosureTable;
-use Drandin\ClosureTableComments\Models\ClosureTableTree;
+use Drandin\ClosureTableComments\Models\StructureTree;
 use DB;
 use Drandin\ClosureTableComments\Models\Comment;
 use Throwable;
 
 /**
- * Class TreeService
+ * Class ClosureTableService
+ *
  * @package Drandin\ClosureTableComments
  */
-class TreeService implements IClosureTable
+final class ClosureTableService implements IClosureTable
 {
-
     /**
      * @var bool
      */
     private $addResult = false;
 
     /**
-     * @var ClosureTableCollection
+     * @var bool
+     */
+    private $deleteResult = false;
+
+    /**
+     * @var NodeCollection
      */
     private $tree;
 
@@ -32,28 +37,36 @@ class TreeService implements IClosureTable
      */
     public function has(int $id): bool
     {
-        return ClosureTableTree::where('descendant_id', $id)->count() > 0;
+        if ($id <= 0) {
+            return false;
+        }
+
+        return StructureTree::where('descendant_id', $id)->count() > 0;
     }
 
     /**
      * @param int $id
-     * @throws Throwable
+     * @return bool
      */
-    public function deleteBranch($id): void
+    public function deleteBranch($id): bool
     {
+        $this->deleteResult = false;
+
         $branchIds = $this->getBranchIds($id);
 
         $branchIds = array_values(array_unique($branchIds));
 
         if (empty($branchIds)) {
-            return;
+            return false;
         }
 
-        DB::transaction(static function () use ($branchIds) {
-            ClosureTableTree::whereIn('descendant_id', $branchIds)->delete();
+        DB::transaction(function () use ($branchIds) {
+            StructureTree::whereIn('descendant_id', $branchIds)->delete();
             Comment::whereIn('id', $branchIds)->delete();
+            $this->deleteResult = true;
         });
 
+        return $this->deleteResult;
     }
 
     /**
@@ -75,7 +88,7 @@ class TreeService implements IClosureTable
             $comment->content = $node->getContent();
             $comment->save();
 
-            $tblTree = ClosureTableTree::getModel()->getTable();
+            $tblTree = StructureTree::getModel()->getTable();
 
             $now = Carbon::now()->format('Y-m-d H:i:s');
 
@@ -104,9 +117,9 @@ class TreeService implements IClosureTable
 
     /**
      * @param int $id
-     * @return ClosureTableCollection|null
+     * @return NodeCollection|null
      */
-    public function getTree($id = 0): ?ClosureTableCollection
+    public function getTree($id = 0): ?NodeCollection
     {
         $this->tree = null;
         $this->buildTreeFlat($this->getBranch($id));
@@ -119,8 +132,9 @@ class TreeService implements IClosureTable
      */
     public function getBranchIds($id): array
     {
-        return ClosureTableTree::where('ancestor_id', $id)
-            ->get()
+        return StructureTree::select('descendant_id')
+            ->where('ancestor_id', $id)
+            ->pluck('descendant_id')
             ->toArray();
     }
 
@@ -143,7 +157,7 @@ class TreeService implements IClosureTable
             return null;
         }
 
-        $treeItem = ClosureTableTree::where('descendant_id', $id)
+        $treeItem = StructureTree::where('descendant_id', $id)
             ->whereRaw('`ancestor_id` = `descendant_id`')
             ->first();
 
@@ -152,14 +166,22 @@ class TreeService implements IClosureTable
         }
 
         /**
-         * @var $treeItem ClosureTableTree
+         * @var $treeItem StructureTree
          */
         return (int) $treeItem->level;
     }
 
-    public function countItemsBySubject($subjectId): int
+    /**
+     * @param int $subjectId
+     * @return int
+     */
+    public function countNodesBySubject(int $subjectId): int
     {
-        return 0;
+        $res = StructureTree::selectRaw('COUNT(DISTINCT `ancestor_id`) AS `countNodes`')
+            ->where('subject_id', $subjectId)
+            ->first();
+
+        return $res->countNodes ?? 0;
     }
 
 
@@ -173,7 +195,7 @@ class TreeService implements IClosureTable
         $tblComments = Comment::getModel()
             ->getTable();
 
-        $tblTree = ClosureTableTree::getModel()
+        $tblTree = StructureTree::getModel()
             ->getTable();
 
         $builder = DB::table($tblTree)
@@ -220,7 +242,7 @@ class TreeService implements IClosureTable
         $tblComments = Comment::getModel()
             ->getTable();
 
-        $tblTree = ClosureTableTree::getModel()
+        $tblTree = StructureTree::getModel()
             ->getTable();
 
         $builder = DB::table($tblTree)
@@ -257,6 +279,22 @@ class TreeService implements IClosureTable
             : [];
     }
 
+    /**
+     * @param int $id
+     * @param int|null $subject_id
+     * @return Node|null
+     */
+    public function getNode(int $id = 0, int $subject_id = null): ?Node
+    {
+        $data = $this->getOne($id, $subject_id);
+
+        if (empty($data)) {
+            return null;
+        }
+
+        return $this->createNode($data);
+    }
+
 
     /**
      * @param array $treeData
@@ -267,7 +305,7 @@ class TreeService implements IClosureTable
         if ($ancestorId >= 0) {
 
             if ($this->tree === null) {
-                $this->tree = new ClosureTableCollection;
+                $this->tree = new NodeCollection;
             }
 
             foreach ($treeData as $item) {
@@ -339,6 +377,27 @@ class TreeService implements IClosureTable
         $node->setUpdatedAt($data['updated_at']);
 
         return $node;
+    }
+
+    /**
+     * @param string $comment
+     * @param int $id
+     * @return bool
+     */
+    public function editComment(string $comment, int $id): bool
+    {
+        if ($comment === '' || $id <= 0) {
+            return false;
+        }
+
+        $commentExist = Comment::find($id);
+
+        if ($commentExist !== null) {
+            $commentExist->content = $comment;
+            return $commentExist->save();
+        }
+
+        return false;
     }
 
 }

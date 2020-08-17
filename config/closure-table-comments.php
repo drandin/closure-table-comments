@@ -15,7 +15,7 @@ return [
         /**
          * Структура и связи элементов дерева
          */
-        'tree' => 'closure_table_tree',
+        'structure' => 'structure_tree',
 
         /**
          * Комментарии и связь с пользователем
