@@ -3,6 +3,7 @@
 namespace Drandin\ClosureTableComments;
 
 use Carbon\Carbon;
+use Drandin\ClosureTableComments\Exceptions\ExceptionStructure;
 use Drandin\ClosureTableComments\Interfaces\IClosureTable;
 use Drandin\ClosureTableComments\Models\StructureTree;
 use DB;
@@ -47,9 +48,14 @@ final class ClosureTableService implements IClosureTable
     /**
      * @param int $id
      * @return bool
+     * @throws Throwable
      */
     public function deleteBranch($id): bool
     {
+        if ($id <= 0) {
+            throw new ExceptionStructure('ID Node is wrong.');
+        }
+
         $this->deleteResult = false;
 
         $branchIds = $this->getBranchIds($id);
@@ -92,11 +98,13 @@ final class ClosureTableService implements IClosureTable
 
             $now = Carbon::now()->format('Y-m-d H:i:s');
 
-            $level = $this->getLevel($id);
+            $level = 0;
 
-            $nextLevel = $level !== null
-                ? $level + 1
-                : 1;
+            if ($id > 0) {
+                $level = $this->getLevel($id);
+            }
+
+            $nextLevel = $level + 1;
 
             $subjectId = $node->getSubjectId();
 
@@ -151,8 +159,12 @@ final class ClosureTableService implements IClosureTable
      * @param int $id
      * @return array
      */
-    public function getHierarchyTree($id = 0): array
+    public function getHierarchyTree(int $id = 0): array
     {
+        if ($id < 0) {
+            throw new ExceptionStructure('Error build tree. ID Node is wrong.');
+        }
+
         return $this->buildHierarchyArrayTree($this->getBranch($id));
     }
 
@@ -160,10 +172,10 @@ final class ClosureTableService implements IClosureTable
      * @param int $id
      * @return int|null
      */
-    public function getLevel(int $id): ?int
+    public function getLevel(int $id = 0): ?int
     {
         if ($id <= 0) {
-            return null;
+            throw new ExceptionStructure('ID Node is wrong.');
         }
 
         $treeItem = StructureTree::where('descendant_id', $id)
@@ -201,6 +213,10 @@ final class ClosureTableService implements IClosureTable
      */
     public function getBranch(int $id = 0, int $subject_id = null): array
     {
+        if ($id < 0) {
+            throw new ExceptionStructure('ID Node is wrong.');
+        }
+
         $tblComments = Comment::getModel()
             ->getTable();
 
@@ -248,6 +264,10 @@ final class ClosureTableService implements IClosureTable
      */
     public function getOne(int $id = 0, int $subject_id = null): array
     {
+        if ($id < 0) {
+            throw new ExceptionStructure('ID Node is wrong.');
+        }
+
         $tblComments = Comment::getModel()
             ->getTable();
 
@@ -295,6 +315,10 @@ final class ClosureTableService implements IClosureTable
      */
     public function getNode(int $id = 0, int $subject_id = null): ?Node
     {
+        if ($id < 0) {
+            throw new ExceptionStructure('ID Node is wrong.');
+        }
+
         $data = $this->getOne($id, $subject_id);
 
         if (empty($data)) {
@@ -311,6 +335,10 @@ final class ClosureTableService implements IClosureTable
      */
     private function buildTreeFlat(array $treeData, int $ancestorId = 0): void
     {
+        if ($ancestorId < 0) {
+            throw new ExceptionStructure('Ancestor is wrong.');
+        }
+
         if ($ancestorId >= 0) {
 
             if ($this->tree === null) {
@@ -342,6 +370,10 @@ final class ClosureTableService implements IClosureTable
      */
     private function buildHierarchyArrayTree(array $treeData, int $ancestorId = 0): array
     {
+        if ($ancestorId < 0) {
+            throw new ExceptionStructure('Ancestor is wrong.');
+        }
+
         $tree = [];
 
         if ($ancestorId >= 0) {
@@ -372,19 +404,33 @@ final class ClosureTableService implements IClosureTable
     {
         $node = new Node;
 
+        if (
+            empty($data['id']) ||
+            empty($data['ancestor_id']) ||
+            empty($data['descendant_id']) ||
+            empty($data['level']) ||
+            $data['level'] < 1 ||
+            !isset($data['nearest_ancestor_id']) ||
+            $data['nearest_ancestor_id'] < 0 ||
+            empty($data['created_at']) ||
+            empty($data['updated_at'])
+        ) {
+            throw new ExceptionStructure('Create Node error');
+        }
+
         $data['created_at'] = Carbon::parse($data['created_at']);
         $data['updated_at'] = Carbon::parse($data['updated_at']);
 
         $node->setId((int) $data['id']);
-        $node->setAncestorId($data['ancestor_id'] ?? 0);
-        $node->setDescendantId($data['descendant_id'] ?? 0);
-        $node->setSubjectId($data['subject_id'] ?? 0);
+        $node->setAncestorId($data['ancestor_id']);
+        $node->setDescendantId($data['descendant_id']);
+        $node->setNearestAncestorId($data['nearest_ancestor_id']);
+        $node->setSubjectId($data['subject_id'] ?? null);
         $node->setUserId($data['user_id'] ?? null);
         $node->setContent($data['content'] ?? '');
-        $node->setLevel($data['level'] ?? 0);
+        $node->setLevel($data['level']);
         $node->setCreatedAt($data['created_at']);
         $node->setUpdatedAt($data['updated_at']);
-
         return $node;
     }
 

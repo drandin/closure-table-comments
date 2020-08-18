@@ -18,7 +18,7 @@ final class Commentator
     /**
      * @var null|int
      */
-    public $subjectId;
+    private $subjectId;
 
     /**
      * Commentator constructor.
@@ -69,13 +69,13 @@ final class Commentator
     /**
      * Ответ на комментарий $id
      *
-     * @param string $comment
      * @param int $id
+     * @param string $comment
      * @param int|null $userId
      * @return bool
      * @throws Throwable
      */
-    public function replyToComment(string $comment, int $id, int $userId = null): bool
+    public function replyToComment(int $id, string $comment, int $userId = null): bool
     {
         if ($comment === '' || $id <= 0) {
             return false;

@@ -13,7 +13,17 @@ final class NodeCollection implements Iterator
     /**
      * @var array
      */
+    protected $nodes = [];
+
+    /**
+     * @var array
+     */
     private $users = [];
+
+    /**
+     * @var bool
+     */
+    private $isUnknownUsers = false;
 
     /**
      * NodeCollection constructor.
@@ -45,6 +55,10 @@ final class NodeCollection implements Iterator
             $this->users[$node->getUserId()] = $node->getUserId();
         }
 
+        if ($node->getUserId() === null) {
+            $this->isUnknownUsers = true;
+        }
+
         return $this;
     }
 
@@ -55,11 +69,6 @@ final class NodeCollection implements Iterator
     {
         return array_values($this->users);
     }
-
-    /**
-     * @var array
-     */
-    protected $nodes = [];
 
 
     /**
@@ -108,5 +117,13 @@ final class NodeCollection implements Iterator
     public function count(): int
     {
         return count($this->nodes);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUnknownUsers(): bool
+    {
+      return $this->isUnknownUsers;
     }
 }
