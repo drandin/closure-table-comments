@@ -16,11 +16,13 @@ final class NodeCollection implements Iterator
     private $users = [];
 
     /**
-     * @param null $nodes
+     * NodeCollection constructor.
+     *
+     * @param array|null $nodes
      */
-    public function __construct($nodes = null)
+    public function __construct(array $nodes = null)
     {
-        if (is_array($nodes)) {
+        if (!empty($nodes)) {
             foreach ($nodes as $node) {
                 if ($node instanceof Node) {
                     $this->addNode($node);
@@ -37,8 +39,9 @@ final class NodeCollection implements Iterator
      */
     public function addNode(Node $node): self
     {
-        if ($node !== null) {
-            $this->nodes[] = $node;
+        $this->nodes[] = $node;
+
+        if ($node->getUserId() !== null) {
             $this->users[$node->getUserId()] = $node->getUserId();
         }
 
@@ -96,9 +99,7 @@ final class NodeCollection implements Iterator
      */
     public function valid(): bool
     {
-        $key = key($this->nodes);
-
-        return $key !== null && $key !== false;
+        return key($this->nodes) !== null;
     }
 
     /**

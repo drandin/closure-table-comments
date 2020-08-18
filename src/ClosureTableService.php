@@ -102,13 +102,22 @@ final class ClosureTableService implements IClosureTable
 
             $newId = (int) $comment->id;
 
-            $sql = "INSERT INTO {$tblTree} (`ancestor_id`, `descendant_id`, `nearest_ancestor_id`, `subject_id`, `level`, `created_at`, `updated_at`)
-            SELECT ancestor_id, {$newId}, {$id}, {$subjectId}, {$nextLevel}, '{$now}', '{$now}'
-            FROM {$tblTree}
-            WHERE descendant_id = {$id}
-            UNION ALL SELECT {$newId}, {$newId}, {$id}, {$subjectId}, {$nextLevel}, '{$now}', '{$now}'";
+            $fields = '`ancestor_id`,';
+            $fields.= '`descendant_id`,';
+            $fields.= '`nearest_ancestor_id`,';
+            $fields.= '`subject_id`,';
+            $fields.= '`level`,';
+            $fields.= '`created_at`,';
+            $fields.= '`updated_at`';
 
-            $this->addResult = DB::insert($sql);
+            $sql = "INSERT INTO {$tblTree} ({$fields})
+            SELECT `ancestor_id`, {$newId}, {$id}, ?, {$nextLevel}, '{$now}', '{$now}'
+            FROM {$tblTree}
+            WHERE `descendant_id` = {$id}
+            UNION ALL SELECT {$newId}, {$newId}, {$id}, ?, {$nextLevel}, '{$now}', '{$now}'";
+
+            $this->addResult = DB::insert($sql, [$subjectId, $subjectId]);
+
         });
 
         return $this->addResult;

@@ -44,9 +44,9 @@ class Node
     /**
      * Код субъекта
      *
-     * @var int
+     * @var int|null
      */
-    protected $subjectId = 0;
+    protected $subjectId;
 
     /**
      * Код пользователя
@@ -161,11 +161,11 @@ class Node
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getSubjectId(): int
+    public function getSubjectId(): ?int
     {
-        return (int) $this->subjectId;
+        return $this->subjectId;
     }
 
     /**
@@ -179,18 +179,18 @@ class Node
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getUserId(): int
+    public function getUserId(): ?int
     {
         return $this->userId;
     }
 
     /**
-     * @param $userId
-     * @return Node
+     * @param int|null $userId
+     * @return $this
      */
-    public function setUserId($userId): Node
+    public function setUserId(int $userId = null): Node
     {
         $this->userId = $userId;
         return $this;
