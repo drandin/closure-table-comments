@@ -78,10 +78,10 @@ interface IClosureTable {
     /**
      * Edit exist comment
      *
-     * @param string $comment
      * @param int $id
+     * @param string $comment
      * @return bool
      */
-    public function editComment(string $comment, int $id): bool;
+    public function editComment(int $id, string $comment): bool;
 
 }

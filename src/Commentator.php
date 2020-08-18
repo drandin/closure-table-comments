@@ -110,13 +110,13 @@ final class Commentator
     /**
      * Редактирование комментария
      *
-     * @param string $comment
      * @param int $id
+     * @param string $comment
      * @return bool
      */
-    public function editComment(string $comment, int $id): bool
+    public function editComment(int $id, string $comment): bool
     {
-        return $this->closureTableService->editComment($comment, $id);
+        return $this->closureTableService->editComment($id, $comment);
     }
 
     /**
@@ -165,5 +165,21 @@ final class Commentator
         return $this->closureTableService->has($id);
     }
 
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function getBranchIds(int $id): array
+    {
+        return $this->closureTableService->getBranchIds($id);
+    }
 
+    /**
+     * @param $id
+     * @return int|null
+     */
+    public function getLevel($id): ?int
+    {
+        return $this->closureTableService->getLevel($id);
+    }
 }
