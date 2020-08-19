@@ -18,12 +18,22 @@ use Eloquent;
  */
 class Comment extends Eloquent
 {
+    /**
+     * Comment constructor.
+     *
+     * @param array $attributes
+     */
     public function __construct(array $attributes = [])
     {
-        $database = config('closure-table-comments.database');
-        $table = config('closure-table-comments.tables.comments');
+        $database = config('closure-table-comments.database') ?? $this->getConnection()->getDatabaseName();
 
-        $this->setTable($database. '.'. $table);
+        $tbl = implode('.', [
+            $database,
+            config('closure-table-comments.tables.comments')
+        ]);
+
+        $this->setTable($tbl);
+
         parent::__construct($attributes);
     }
 

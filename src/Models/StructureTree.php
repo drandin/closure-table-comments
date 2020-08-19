@@ -21,12 +21,22 @@ use Eloquent;
 class StructureTree extends Eloquent
 {
 
+    /**
+     * StructureTree constructor.
+     *
+     * @param array $attributes
+     */
     public function __construct(array $attributes = [])
     {
-        $database = config('closure-table-comments.database');
-        $table = config('closure-table-comments.tables.structure');
+        $database = config('closure-table-comments.database') ?? $this->getConnection()->getDatabaseName();
 
-        $this->setTable($database. '.'. $table);
+        $tbl = implode('.', [
+            $database,
+            config('closure-table-comments.tables.structure')
+        ]);
+
+        $this->setTable($tbl);
+
         parent::__construct($attributes);
     }
 

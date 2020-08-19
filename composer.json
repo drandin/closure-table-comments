@@ -1,7 +1,14 @@
 {
     "name": "drandin/closure-table-comments",
-    "description": "Storing hierarchical tree structures in a database using the \"Closure Table\" method combined with \"Adjacency List\"",
-    "type": "project",
+    "description": "A system for managing hierarchical tree comments. Storing hierarchical tree structures in a database using the \"Closure Table\" method combined with \"Adjacency List\"",
+    "keywords": [
+        "hierarchical",
+        "tree",
+        "closure table",
+        "adjacency list",
+        "Laravel",
+        ""
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -15,5 +22,7 @@
             "Drandin\\ClosureTableComments\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "php": "^7.3"
+    }
 }

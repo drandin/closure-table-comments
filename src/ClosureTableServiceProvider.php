@@ -22,10 +22,7 @@ final class ClosureTableServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/closure-table-comments.php',
-            'closure-table-comments'
-        );
+        //
     }
 
     /**
@@ -38,5 +35,10 @@ final class ClosureTableServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/closure-table-comments.php' => config_path('closure-table-comments.php'),
         ], 'config');
+
+        $this->loadMigrationsFrom([
+            __DIR__.'/../database/migrations/2020_08_17_000100_create_table_comments.php',
+            __DIR__.'/../database/migrations/2020_08_17_000200_create_table_structure_tree.php'
+        ]);
     }
 }

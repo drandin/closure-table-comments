@@ -20,8 +20,10 @@ class CreateTableComments extends Migration
      */
     public function __construct()
     {
+        $database = config('closure-table-comments.database') ?? DB::getDatabaseName();
+
         $this->tbl = implode('.', [
-            config('closure-table-comments.database'),
+            $database,
             config('closure-table-comments.tables.comments')
         ]);
     }
