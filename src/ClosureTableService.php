@@ -23,6 +23,11 @@ final class ClosureTableService implements IClosureTable
     private $addResult = false;
 
     /**
+     *
+     */
+    private $addCommentId = 0;
+
+    /**
      * @var bool
      */
     private $deleteResult = false;
@@ -80,10 +85,10 @@ final class ClosureTableService implements IClosureTable
      *
      * @param Node $node
      * @param int $id
-     * @return bool
+     * @return int
      * @throws Throwable
      */
-    public function add(Node $node, int $id = 0): bool
+    public function add(Node $node, int $id = 0): int
     {
         $this->addResult = false;
 
@@ -128,7 +133,11 @@ final class ClosureTableService implements IClosureTable
 
         });
 
-        return $this->addResult;
+        if ($this->addResult === true) {
+            $this->addCommentId = DB::getPdo()->lastInsertId();
+        }
+
+        return $this->addCommentId;
     }
 
 

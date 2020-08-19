@@ -32,9 +32,9 @@ interface IClosureTable {
      *
      * @param Node $node
      * @param int $id
-     * @return bool
+     * @return int
      */
-    public function add(Node $node, int $id = 0): bool;
+    public function add(Node $node, int $id = 0): int;
 
     /**
      * Return part of tree or entire hierarchy from root
