@@ -140,8 +140,21 @@
                 ->setSubjectId(5636)
                 ->getTreeBranch(2);
 ```
-Мы получим коллекцию всех узлов иерархии начиная с узла **2**.
+Мы получим коллекцию объектов всех узлов иерархии начиная с узла **2**.
 
 ##### 7. Получение массива древовидной иерархии
 
+Получить массив дерева комментариев можно при помощи метода **getTreeBranchArray**. 
 
+ ```php
+   use Drandin\ClosureTableComments\ClosureTableService;
+   use Drandin\ClosureTableComments\Commentator;
+ 
+   $commentator = new Commentator(new ClosureTableService());
+   
+   $tree = $commentator
+                ->setSubjectId(5636)
+                ->getTreeBranchArray();
+```
+
+Если необходимо получить ветку комментариев, которая должна начинаться с определённого узла, то в метод **getTreeBranchArray** следует передать идентификатор этого узла иерархии.
