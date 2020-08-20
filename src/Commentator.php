@@ -47,10 +47,10 @@ final class Commentator
      *
      * @param string $comment
      * @param int|null $userId
-     * @return bool
+     * @return int
      * @throws Throwable
      */
-    public function addCommentToRoot(string $comment, int $userId = null): bool
+    public function addCommentToRoot(string $comment, int $userId = null): int
     {
         if ($comment === '') {
             return false;

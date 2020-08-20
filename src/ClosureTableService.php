@@ -130,14 +130,15 @@ final class ClosureTableService implements IClosureTable
             UNION ALL SELECT {$newId}, {$newId}, {$id}, ?, {$nextLevel}, '{$now}', '{$now}'";
 
             $this->addResult = DB::insert($sql, [$subjectId, $subjectId]);
+            $this->addCommentId = $comment->id;
 
         });
 
         if ($this->addResult === true) {
-            $this->addCommentId = DB::getPdo()->lastInsertId();
+            return $this->addCommentId;
         }
 
-        return $this->addCommentId;
+        return 0;
     }
 
 
