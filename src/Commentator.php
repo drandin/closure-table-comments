@@ -102,9 +102,9 @@ final class Commentator
      * @return bool
      * @throws Throwable
      */
-    public function deleteBranch(int $id): bool
+    public function delete(int $id): bool
     {
-        return $this->closureTableService->deleteBranch($id);
+        return $this->closureTableService->delete($id);
     }
 
     /**

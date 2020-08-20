@@ -25,7 +25,7 @@ interface IClosureTable {
      * @param int $id
      * @return bool
      */
-    public function deleteBranch(int $id): bool;
+    public function delete(int $id): bool;
 
     /**
      * Add one new element into tree

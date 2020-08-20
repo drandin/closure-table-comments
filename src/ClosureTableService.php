@@ -55,7 +55,7 @@ final class ClosureTableService implements IClosureTable
      * @return bool
      * @throws Throwable
      */
-    public function deleteBranch($id): bool
+    public function delete($id): bool
     {
         if ($id <= 0) {
             throw new ExceptionStructure('ID Node is wrong.');
@@ -187,7 +187,8 @@ final class ClosureTableService implements IClosureTable
             throw new ExceptionStructure('ID Node is wrong.');
         }
 
-        $treeItem = StructureTree::where('descendant_id', $id)
+        $treeItem = StructureTree::select(['level'])
+            ->where('descendant_id', $id)
             ->whereRaw('`ancestor_id` = `descendant_id`')
             ->first();
 
